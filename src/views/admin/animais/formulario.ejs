@@ -1,0 +1,128 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<% const dados = animal || formulario; %>
+<% const editando = Boolean(animal); %>
+<% const idsCaracteristicas = animal && animal.caracteristicas
+     ? animal.caracteristicas.map(function (c) { return c.id_caracteristica; })
+     : [].concat(formulario.caracteristicas || []).map(Number); %>
+
+<div class="cabecalho-admin">
+  <h1><%= editando ? 'Editar ' + animal.nome : 'Cadastrar animal' %></h1>
+  <a class="botao botao--contorno" href="/admin/animais">Voltar para a lista</a>
+</div>
+
+<form class="formulario-admin" method="post"
+      action="<%= editando ? '/admin/animais/' + animal.id_animal : '/admin/animais' %>"
+      novalidate data-validar>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <fieldset>
+    <legend>Identificação</legend>
+
+    <div class="campo">
+      <label for="nome">Nome *</label>
+      <input type="text" id="nome" name="nome" required maxlength="80" value="<%= dados.nome || '' %>">
+    </div>
+
+    <div class="campo-par">
+      <div class="campo">
+        <label for="id_especie">Espécie *</label>
+        <select id="id_especie" name="id_especie" required>
+          <option value="">Escolha</option>
+          <% opcoes.especies.forEach(function (e) { %>
+            <option value="<%= e.id_especie %>" <%= String(dados.id_especie) === String(e.id_especie) ? 'selected' : '' %>><%= e.nome %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="id_raca">Raça</label>
+        <select id="id_raca" name="id_raca">
+          <option value="">Sem raça definida</option>
+          <% opcoes.racas.forEach(function (r) { %>
+            <option value="<%= r.id_raca %>" data-especie="<%= r.id_especie %>"
+              <%= String(dados.id_raca) === String(r.id_raca) ? 'selected' : '' %>><%= r.nome %></option>
+          <% }); %>
+        </select>
+        <small>A lista se ajusta à espécie escolhida.</small>
+      </div>
+    </div>
+
+    <div class="campo-par">
+      <div class="campo">
+        <label for="sexo">Sexo *</label>
+        <select id="sexo" name="sexo" required>
+          <option value="">Escolha</option>
+          <option value="F" <%= dados.sexo === 'F' ? 'selected' : '' %>>Fêmea</option>
+          <option value="M" <%= dados.sexo === 'M' ? 'selected' : '' %>>Macho</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="porte">Porte *</label>
+        <select id="porte" name="porte" required>
+          <option value="">Escolha</option>
+          <option value="PEQUENO" <%= dados.porte === 'PEQUENO' ? 'selected' : '' %>>Pequeno</option>
+          <option value="MEDIO" <%= dados.porte === 'MEDIO' ? 'selected' : '' %>>Médio</option>
+          <option value="GRANDE" <%= dados.porte === 'GRANDE' ? 'selected' : '' %>>Grande</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo-par">
+      <div class="campo">
+        <label for="idade_meses">Idade em meses *</label>
+        <input type="number" id="idade_meses" name="idade_meses" min="0" max="360" required
+               value="<%= dados.idade_meses !== undefined ? dados.idade_meses : '' %>">
+        <small>0 a 360. Um animal de 2 anos são 24 meses.</small>
+      </div>
+      <div class="campo">
+        <label for="data_resgate">Data do resgate</label>
+        <input type="date" id="data_resgate" name="data_resgate" value="<%= dados.data_resgate || '' %>">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Situação de saúde</legend>
+    <div class="campo-opcoes">
+      <label class="opcao"><input type="checkbox" name="castrado" value="true" <%= dados.castrado ? 'checked' : '' %>> Castrado</label>
+      <label class="opcao"><input type="checkbox" name="vacinado" value="true" <%= dados.vacinado ? 'checked' : '' %>> Vacinado</label>
+      <label class="opcao"><input type="checkbox" name="vermifugado" value="true" <%= dados.vermifugado ? 'checked' : '' %>> Vermifugado</label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Temperamento e convivência</legend>
+    <div class="campo-opcoes campo-opcoes--grade">
+      <% opcoes.caracteristicas.forEach(function (item) { %>
+        <label class="opcao">
+          <input type="checkbox" name="caracteristicas" value="<%= item.id_caracteristica %>"
+                 <%= idsCaracteristicas.includes(item.id_caracteristica) ? 'checked' : '' %>>
+          <%= item.nome %>
+        </label>
+      <% }); %>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Descrição pública</legend>
+    <div class="campo">
+      <label for="descricao">O que o adotante precisa saber</label>
+      <textarea id="descricao" name="descricao" rows="6" maxlength="4000"><%= dados.descricao || '' %></textarea>
+      <small>Escreva como você contaria para alguém interessado: histórico, comportamento e cuidados.</small>
+    </div>
+  </fieldset>
+
+  <% if (editando) { %>
+    <p class="miudo">
+      A situação atual é <strong><%= f.situacaoAnimal(animal.situacao) %></strong>. Ela é alterada
+      pela lista de animais, para respeitar o caminho permitido entre as situações.
+    </p>
+  <% } %>
+
+  <div class="formulario-admin__acoes">
+    <button class="botao botao--grande" type="submit"><%= editando ? 'Salvar alterações' : 'Cadastrar animal' %></button>
+    <a class="botao botao--contorno" href="/admin/animais">Cancelar</a>
+  </div>
+</form>
+
+<%- include('../../partials/rodapeAdmin') %>

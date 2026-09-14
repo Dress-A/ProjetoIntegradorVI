@@ -1,0 +1,104 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<div class="cabecalho-admin">
+  <h1>Usuários da equipe</h1>
+</div>
+
+<section class="bloco">
+  <h2>Cadastrar pessoa na equipe</h2>
+  <form class="formulario-admin formulario-admin--linha" method="post" action="/admin/usuarios" novalidate data-validar>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="campo">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" required minlength="3" maxlength="120" value="<%= formulario.nome || '' %>">
+    </div>
+    <div class="campo">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" required value="<%= formulario.email || '' %>">
+    </div>
+    <div class="campo">
+      <label for="perfil">Perfil de acesso</label>
+      <select id="perfil" name="perfil" required>
+        <% perfis.forEach(function (p) { %>
+          <option value="<%= p.valor %>"><%= p.rotulo %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="senha">Senha inicial</label>
+      <input type="password" id="senha" name="senha" required minlength="8" autocomplete="new-password">
+      <small>Mínimo de 8 caracteres, misturando letras e números.</small>
+    </div>
+    <div class="campo campo--acao">
+      <button class="botao" type="submit">Criar conta</button>
+    </div>
+  </form>
+  <p class="miudo">
+    O voluntário cadastra animais e acompanha pedidos. O administrador faz isso e
+    ainda decide os pedidos, cadastra usuários e vê o painel.
+  </p>
+</section>
+
+<div class="tabela-rolagem">
+  <table class="tabela">
+    <caption class="rotulo-oculto">Contas de acesso ao sistema</caption>
+    <thead>
+      <tr><th scope="col">Nome</th><th scope="col">E-mail</th><th scope="col">Perfil</th><th scope="col">Estado</th><th scope="col">Ações</th></tr>
+    </thead>
+    <tbody>
+      <% usuarios.forEach(function (u) { %>
+        <tr <%- u.ativo ? '' : 'class="linha-inativa"' %>>
+          <th scope="row"><%= u.nome %></th>
+          <td><%= u.email %></td>
+          <td><%= f.perfil(u.perfil) %></td>
+          <td><%= u.ativo ? 'Ativa' : 'Desativada' %></td>
+          <td class="acoes">
+            <details>
+              <summary>Editar</summary>
+              <form class="formulario-embutido" method="post" action="/admin/usuarios/<%= u.id_usuario %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="campo">
+                  <label for="nome-<%= u.id_usuario %>">Nome</label>
+                  <input type="text" id="nome-<%= u.id_usuario %>" name="nome" value="<%= u.nome %>" required>
+                </div>
+                <div class="campo">
+                  <label for="email-<%= u.id_usuario %>">E-mail</label>
+                  <input type="email" id="email-<%= u.id_usuario %>" name="email" value="<%= u.email %>" required>
+                </div>
+                <div class="campo">
+                  <label for="perfil-<%= u.id_usuario %>">Perfil</label>
+                  <select id="perfil-<%= u.id_usuario %>" name="perfil">
+                    <% perfis.forEach(function (p) { %>
+                      <option value="<%= p.valor %>" <%= u.perfil === p.valor ? 'selected' : '' %>><%= p.rotulo %></option>
+                    <% }); %>
+                  </select>
+                </div>
+                <button class="botao botao--pequeno" type="submit">Salvar</button>
+              </form>
+
+              <form class="formulario-embutido" method="post" action="/admin/usuarios/<%= u.id_usuario %>/senha">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="campo">
+                  <label for="senha-<%= u.id_usuario %>">Nova senha</label>
+                  <input type="password" id="senha-<%= u.id_usuario %>" name="senha" minlength="8" required autocomplete="new-password">
+                </div>
+                <button class="botao botao--pequeno" type="submit">Redefinir senha</button>
+              </form>
+            </details>
+
+            <form class="forma-inline" method="post" action="/admin/usuarios/<%= u.id_usuario %>/ativo"
+                  data-confirmar="<%= u.ativo ? 'Desativar' : 'Reativar' %> a conta de <%= u.nome %>?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="botao-texto <%= u.ativo ? 'botao-texto--perigo' : '' %>" type="submit">
+                <%= u.ativo ? 'Desativar' : 'Reativar' %>
+              </button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../../partials/rodapeAdmin') %>

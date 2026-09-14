@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> — AdotaPel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body class="corpo-login">
+  <main class="caixa-login" id="conteudo">
+    <a class="marca" href="/">
+      <img src="/img/logo.svg" alt="" width="34" height="34" aria-hidden="true">
+      <span>AdotaPel</span>
+    </a>
+
+    <h1>Entrar na administração</h1>
+    <p class="miudo">Área da equipe. Quem procura um animal para adotar não precisa de conta.</p>
+
+    <%- include('../partials/avisos') %>
+
+    <form method="post" action="/admin/login" novalidate data-validar>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" required autocomplete="username" autofocus
+               value="<%= formulario.email || '' %>">
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" required autocomplete="current-password">
+      </div>
+
+      <button class="botao botao--grande" type="submit">Entrar</button>
+    </form>
+
+    <p class="miudo">
+      Cinco tentativas erradas bloqueiam a conta por 15 minutos. Esqueceu a senha?
+      Peça a redefinição a quem administra o sistema.
+    </p>
+
+    <p><a href="/">Voltar ao site</a></p>
+  </main>
+
+  <script src="/js/principal.js" defer></script>
+</body>
+</html>
