@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-label="Animal ainda sem foto cadastrada">
+  <rect width="320" height="240" fill="#e2ece8"/>
+  <g fill="#90a9a4">
+    <circle cx="126" cy="104" r="15"/><circle cx="194" cy="104" r="15"/>
+    <circle cx="100" cy="140" r="13"/><circle cx="220" cy="140" r="13"/>
+    <path d="M160 132c22 0 40 16 40 36 0 14-11 22-24 22-7 0-11-3-16-3s-9 3-16 3c-13 0-24-8-24-22 0-20 18-36 40-36z"/>
+  </g>
+  <text x="160" y="212" font-family="system-ui, sans-serif" font-size="15" fill="#43585c" text-anchor="middle">Sem foto cadastrada</text>
+</svg>
