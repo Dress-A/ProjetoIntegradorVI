@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="AdotaPel">
+  <rect width="48" height="48" rx="12" fill="#0f5257"/>
+  <path d="M17 20a3.6 4.6 0 1 0 0-.1zM31 20a3.6 4.6 0 1 0 0-.1zM11 28a3.2 4 0 1 0 0-.1zM37 28a3.2 4 0 1 0 0-.1z" fill="#f2f7f5"/>
+  <path d="M24 25c4.6 0 8.4 3.4 8.4 7.6 0 3-2.3 4.6-5.1 4.6-1.4 0-2.3-.5-3.3-.5s-1.9.5-3.3.5c-2.8 0-5.1-1.6-5.1-4.6C15.6 28.4 19.4 25 24 25z" fill="#f2f7f5"/>
+</svg>
