@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> — AdotaPel</title>
+  <meta name="description" content="Catálogo de animais resgatados para adoção responsável em Pelotas e região.">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+  <a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <div class="topo__barra">
+      <a class="marca" href="/">
+        <img src="/img/logo.svg" alt="" width="34" height="34" aria-hidden="true">
+        <span>AdotaPel</span>
+      </a>
+
+      <form class="busca-topo" action="/animais" method="get" role="search">
+        <label for="busca-topo">Buscar animal pelo nome</label>
+        <input type="search" id="busca-topo" name="termo" placeholder="Pesquisar..." value="<%= typeof filtros !== 'undefined' && filtros.termo ? filtros.termo : '' %>">
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div class="topo__acoes">
+        <% if (usuarioLogado) { %>
+          <a class="botao botao--contorno botao--pequeno" href="/admin/animais">Administração</a>
+        <% } else { %>
+          <a class="botao botao--contorno botao--pequeno" href="/admin/login">Entrar</a>
+        <% } %>
+      </div>
+
+      <button class="menu-alternar" type="button" aria-expanded="false" aria-controls="menu-principal">
+        <span class="menu-alternar__traco" aria-hidden="true"></span>
+        Menu
+      </button>
+    </div>
+
+    <nav class="menu" id="menu-principal" aria-label="Navegação principal">
+      <ul>
+        <li><a href="/" <%- paginaAtiva === 'inicio' ? 'aria-current="page"' : '' %>>Início</a></li>
+        <li><a href="/animais" <%- paginaAtiva === 'animais' ? 'aria-current="page"' : '' %>>Animais</a></li>
+        <li><a href="/sobre" <%- paginaAtiva === 'sobre' ? 'aria-current="page"' : '' %>>Sobre</a></li>
+        <li><a href="/servicos" <%- paginaAtiva === 'servicos' ? 'aria-current="page"' : '' %>>Serviços</a></li>
+        <li><a href="/relacionadas" <%- paginaAtiva === 'relacionadas' ? 'aria-current="page"' : '' %>>Relacionadas</a></li>
+        <li><a href="/contato" <%- paginaAtiva === 'contato' ? 'aria-current="page"' : '' %>>Contato</a></li>
+        <li><a href="/acompanhar" <%- paginaAtiva === 'acompanhar' ? 'aria-current="page"' : '' %>>Acompanhar pedido</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="conteudo" class="conteudo">
+    <%- include('avisos') %>

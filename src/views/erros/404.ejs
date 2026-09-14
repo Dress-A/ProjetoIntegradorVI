@@ -1,0 +1,16 @@
+<%- include('../partials/cabecalho') %>
+
+<section class="pagina-erro">
+  <p class="pagina-erro__codigo">Erro 404</p>
+  <h1>Esta página não existe</h1>
+  <p>
+    O endereço <code><%= caminho %></code> não corresponde a nenhuma página do site.
+    Pode ser um link antigo, ou um animal que saiu do catálogo depois de adotado.
+  </p>
+  <p class="pagina-erro__acoes">
+    <a class="botao" href="/animais">Ver animais disponíveis</a>
+    <a class="botao botao--contorno" href="/">Voltar ao início</a>
+  </p>
+</section>
+
+<%- include('../partials/rodape') %>

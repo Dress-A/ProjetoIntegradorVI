@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= titulo %> — Administração AdotaPel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body class="corpo-admin">
+  <a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo-admin">
+    <a class="marca marca--admin" href="/admin/animais">
+      <img src="/img/logo.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span>AdotaPel · Administração</span>
+    </a>
+
+    <div class="topo-admin__usuario">
+      <span><%= usuarioLogado.nome %> · <%= f.perfil(usuarioLogado.perfil) %></span>
+      <a href="/" target="_blank" rel="noopener">Ver o site</a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="botao botao--contorno botao--pequeno" type="submit">Sair</button>
+      </form>
+    </div>
+  </header>
+
+  <div class="painel-admin">
+    <nav class="menu-lateral" aria-label="Menu da administração">
+      <ul>
+        <% if (usuarioLogado.perfil === 'ADMINISTRADOR') { %>
+          <li><a href="/admin" <%- paginaAtiva === 'painel' ? 'aria-current="page"' : '' %>>Painel</a></li>
+        <% } %>
+        <li><a href="/admin/animais" <%- paginaAtiva === 'animais' ? 'aria-current="page"' : '' %>>Animais</a></li>
+        <li><a href="/admin/solicitacoes" <%- paginaAtiva === 'solicitacoes' ? 'aria-current="page"' : '' %>>Solicitações</a></li>
+        <li><a href="/admin/atendimentos" <%- paginaAtiva === 'atendimentos' ? 'aria-current="page"' : '' %>>Atendimentos</a></li>
+        <% if (usuarioLogado.perfil === 'ADMINISTRADOR') { %>
+          <li><a href="/admin/usuarios" <%- paginaAtiva === 'usuarios' ? 'aria-current="page"' : '' %>>Usuários</a></li>
+        <% } %>
+      </ul>
+    </nav>
+
+    <main id="conteudo" class="conteudo-admin">
+      <%- include('avisos') %>

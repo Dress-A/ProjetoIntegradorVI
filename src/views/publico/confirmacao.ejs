@@ -1,0 +1,29 @@
+<%- include('../partials/cabecalho') %>
+
+<section class="confirmacao">
+  <h1>Pedido registrado</h1>
+
+  <p class="protocolo">
+    <span>Seu protocolo</span>
+    <strong><%= dados.protocolo %></strong>
+  </p>
+
+  <p>
+    Anote esse número. Com ele e o e-mail <strong><%= dados.email %></strong> você
+    consulta o andamento a qualquer momento, sem precisar criar conta.
+  </p>
+
+  <h2>O que acontece agora</h2>
+  <ol class="passos">
+    <li>A equipe analisa o pedido e pode ligar para conversar sobre a casa e a rotina.</li>
+    <li>Você recebe um e-mail a cada mudança de situação do pedido.</li>
+    <li>Se for aprovado, a equipe combina a entrevista e a entrega do animal.</li>
+  </ol>
+
+  <p class="confirmacao__acoes">
+    <a class="botao" href="/acompanhar">Acompanhar este pedido</a>
+    <a class="botao botao--contorno" href="/animais">Ver outros animais</a>
+  </p>
+</section>
+
+<%- include('../partials/rodape') %>

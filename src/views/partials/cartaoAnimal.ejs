@@ -1,0 +1,11 @@
+<article class="cartao-animal">
+  <a class="cartao-animal__foto" href="/animais/<%= animal.id_animal %>">
+    <img src="<%= f.fotoPrincipal(animal) %>" alt="<%= f.legendaFoto(animal) %>" loading="lazy" width="320" height="220">
+  </a>
+  <div class="cartao-animal__corpo">
+    <h3><a href="/animais/<%= animal.id_animal %>"><%= animal.nome %></a></h3>
+    <p class="cartao-animal__resumo"><%= f.resumoAnimal(animal) %></p>
+    <% if (animal.raca) { %><p class="cartao-animal__raca"><%= animal.raca.nome %></p><% } %>
+    <a class="botao botao--pequeno" href="/animais/<%= animal.id_animal %>">Ver perfil de <%= animal.nome %></a>
+  </div>
+</article>

@@ -1,0 +1,96 @@
+<%- include('../partials/cabecalho') %>
+
+<section class="banner">
+  <div class="banner__texto">
+    <h1>Adote com responsabilidade</h1>
+    <p>
+      Cada animal desta página foi resgatado em Pelotas ou na região e espera por
+      uma casa. Veja quem combina com o seu espaço e a sua rotina, faça o pedido
+      pelo site e acompanhe a resposta pelo protocolo.
+    </p>
+    <p class="banner__acoes">
+      <a class="botao" href="/animais">Ver animais</a>
+      <a class="botao botao--contorno" href="/acompanhar">Acompanhar meu pedido</a>
+    </p>
+  </div>
+  <img class="banner__imagem" src="/img/banner.svg" alt="" aria-hidden="true">
+</section>
+
+<section class="slider" aria-labelledby="slider-titulo">
+  <h2 id="slider-titulo">Antes de adotar</h2>
+
+  <div class="slider__abas" role="tablist" aria-label="Etapas da adoção">
+    <button type="button" role="tab" id="aba-1" aria-controls="slide-1" aria-selected="true">1. Escolher</button>
+    <button type="button" role="tab" id="aba-2" aria-controls="slide-2" aria-selected="false" tabindex="-1">2. Pedir</button>
+    <button type="button" role="tab" id="aba-3" aria-controls="slide-3" aria-selected="false" tabindex="-1">3. Combinar</button>
+  </div>
+
+  <div class="slider__palco">
+    <section class="slide" id="slide-1" role="tabpanel" aria-labelledby="aba-1" tabindex="0">
+      <h3>Escolha pensando na rotina, não só na aparência</h3>
+      <p>
+        Porte grande pede espaço e passeio diário. Filhote pede tempo e paciência.
+        Animal idoso costuma ser calmo e já educado. Os filtros do catálogo ajudam
+        a chegar em quem combina com a sua casa.
+      </p>
+    </section>
+
+    <section class="slide" id="slide-2" role="tabpanel" aria-labelledby="aba-2" tabindex="0" hidden>
+      <h3>O pedido não exige cadastro</h3>
+      <p>
+        Você preenche o formulário na página do animal e recebe um protocolo na
+        hora. Guarde esse número: com ele e o seu e-mail dá para ver em que etapa
+        está o pedido, sem precisar mandar mensagem para ninguém.
+      </p>
+    </section>
+
+    <section class="slide" id="slide-3" role="tabpanel" aria-labelledby="aba-3" tabindex="0" hidden>
+      <h3>A conversa vem depois</h3>
+      <p>
+        A equipe analisa o pedido, conversa com você sobre a casa e sobre os outros
+        animais, e só então marca a entrega. A adoção é gratuita e acompanha o
+        termo de compromisso de castração e cuidados.
+      </p>
+    </section>
+  </div>
+</section>
+
+<section class="secao">
+  <div class="secao__topo">
+    <h2>Animais em destaque</h2>
+    <a href="/animais">Ver todos os animais</a>
+  </div>
+
+  <% if (destaques.length) { %>
+    <div class="grade-animais">
+      <% destaques.forEach(function (animal) { %>
+        <%- include('../partials/cartaoAnimal', { animal: animal }) %>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p class="vazio">
+      Nenhum animal publicado ainda. Assim que a equipe cadastrar os resgatados,
+      eles aparecem aqui.
+    </p>
+  <% } %>
+</section>
+
+<section class="secao secao--destacada">
+  <h2>Como a AdotaPel funciona</h2>
+  <div class="colunas-tres">
+    <div>
+      <h3>Informação atualizada</h3>
+      <p>Quando um animal é adotado, ele sai do catálogo na mesma hora. Ninguém perde tempo com anúncio velho.</p>
+    </div>
+    <div>
+      <h3>Pedido com protocolo</h3>
+      <p>Cada interesse vira um número. Nada de mensagem privada sem resposta e sem prazo.</p>
+    </div>
+    <div>
+      <h3>Histórico guardado</h3>
+      <p>Toda decisão fica registrada com autor, data e motivo, para a organização saber depois o que foi combinado.</p>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/rodape') %>

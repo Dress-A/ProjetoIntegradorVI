@@ -1,0 +1,13 @@
+<%- include('../partials/cabecalho') %>
+
+<section class="pagina-erro">
+  <p class="pagina-erro__codigo">Erro <%= status %></p>
+  <h1><%= status >= 500 ? 'Erro no sistema' : 'Não foi possível concluir' %></h1>
+  <p><%= mensagem %></p>
+  <p class="pagina-erro__acoes">
+    <a class="botao" href="/">Voltar ao início</a>
+    <a class="botao botao--contorno" href="/contato">Falar com a equipe</a>
+  </p>
+</section>
+
+<%- include('../partials/rodape') %>
