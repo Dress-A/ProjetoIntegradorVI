@@ -1,0 +1,10 @@
+<% if (avisos && avisos.length) { %>
+  <div class="avisos" role="status" aria-live="polite">
+    <% avisos.forEach(function (aviso) { %>
+      <p class="aviso aviso--<%= aviso.tipo %>">
+        <strong><%= aviso.tipo === 'erro' ? 'Não deu certo:' : aviso.tipo === 'aviso' ? 'Atenção:' : 'Pronto:' %></strong>
+        <%= aviso.texto %>
+      </p>
+    <% }); %>
+  </div>
+<% } %>

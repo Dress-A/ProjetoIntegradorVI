@@ -1,0 +1,19 @@
+<% if (resultado.paginas > 1) { %>
+  <nav class="paginacao" aria-label="Paginação dos resultados">
+    <% if (resultado.pagina > 1) { %>
+      <a href="<%= f.comPagina(queryBase, resultado.pagina - 1) %>" rel="prev">Página anterior</a>
+    <% } %>
+
+    <% for (let p = 1; p <= resultado.paginas; p++) { %>
+      <% if (p === resultado.pagina) { %>
+        <span aria-current="page" class="paginacao__atual">Página <%= p %></span>
+      <% } else { %>
+        <a href="<%= f.comPagina(queryBase, p) %>"><%= p %></a>
+      <% } %>
+    <% } %>
+
+    <% if (resultado.pagina < resultado.paginas) { %>
+      <a href="<%= f.comPagina(queryBase, resultado.pagina + 1) %>" rel="next">Próxima página</a>
+    <% } %>
+  </nav>
+<% } %>
