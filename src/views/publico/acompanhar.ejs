@@ -1,0 +1,62 @@
+<%- include('../partials/cabecalho') %>
+
+<div class="cabecalho-pagina">
+  <h1>Acompanhar pedido de adoção</h1>
+  <p>Informe o protocolo que apareceu na confirmação e o e-mail usado no pedido.</p>
+</div>
+
+<div class="acompanhar">
+  <form method="post" action="/acompanhar" class="acompanhar__form" novalidate data-validar>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="campo">
+      <label for="protocolo">Protocolo *</label>
+      <input type="text" id="protocolo" name="protocolo" required placeholder="2026-000148"
+             pattern="\d{4}-\d{6}" data-mascara="protocolo"
+             data-mensagem-padrao="O protocolo tem o formato AAAA-NNNNNN, como 2026-000148."
+             value="<%= formulario.protocolo || '' %>">
+      <small>Formato AAAA-NNNNNN, como aparece na confirmação e no e-mail.</small>
+    </div>
+
+    <div class="campo">
+      <label for="email-consulta">E-mail usado no pedido *</label>
+      <input type="email" id="email-consulta" name="email" required autocomplete="email"
+             value="<%= formulario.email || '' %>">
+    </div>
+
+    <button class="botao" type="submit">Consultar pedido</button>
+  </form>
+
+  <% if (solicitacao) { %>
+    <section class="acompanhar__resultado">
+      <h2>Pedido <%= solicitacao.protocolo %></h2>
+
+      <p class="linha-status">
+        <span class="<%= 'selo selo--' + solicitacao.status.toLowerCase() %>"><%= f.statusPedido(solicitacao.status) %></span>
+        <span><%= f.explicacaoPedido(solicitacao.status) %></span>
+      </p>
+
+      <dl class="ficha">
+        <div><dt>Animal</dt><dd><a href="/animais/<%= solicitacao.animal.id_animal %>"><%= solicitacao.animal.nome %></a></dd></div>
+        <div><dt>Pedido feito em</dt><dd><%= f.dataHora(solicitacao.data_solicitacao) %></dd></div>
+        <div><dt>Última movimentação</dt><dd><%= f.dataHora(solicitacao.data_decisao || solicitacao.data_solicitacao) %></dd></div>
+      </dl>
+
+      <h3>Etapas até aqui</h3>
+      <ol class="linha-do-tempo">
+        <% solicitacao.historico.forEach(function (item) { %>
+          <li>
+            <strong><%= f.statusPedido(item.status_novo) %></strong>
+            <span><%= f.dataHora(item.data_registro) %></span>
+          </li>
+        <% }); %>
+      </ol>
+      <p class="miudo">
+        As observações internas da equipe não aparecem aqui. Em caso de dúvida,
+        fale com a organização pelo <a href="/contato">canal de contato</a>.
+      </p>
+    </section>
+  <% } %>
+</div>
+
+<%- include('../partials/rodape') %>

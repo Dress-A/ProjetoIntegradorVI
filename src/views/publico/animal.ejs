@@ -1,0 +1,159 @@
+<%- include('../partials/cabecalho') %>
+
+<nav class="trilha" aria-label="Você está em">
+  <a href="/">Início</a> <span aria-hidden="true">›</span>
+  <a href="/animais">Animais</a> <span aria-hidden="true">›</span>
+  <span><%= animal.nome %></span>
+</nav>
+
+<article class="perfil-animal">
+  <div class="perfil-animal__galeria">
+    <img class="perfil-animal__foto" id="foto-principal"
+         src="<%= f.fotoPrincipal(animal) %>" alt="<%= f.legendaFoto(animal) %>" width="640" height="440">
+
+    <% if (animal.fotos && animal.fotos.length > 1) { %>
+      <ul class="miniaturas">
+        <% animal.fotos.forEach(function (foto) { %>
+          <li>
+            <button type="button" class="miniatura" data-foto="<%= foto.caminho_arquivo %>"
+                    data-legenda="<%= foto.legenda || ('Foto de ' + animal.nome) %>">
+              <img src="<%= foto.caminho_arquivo %>" alt="<%= foto.legenda || ('Outra foto de ' + animal.nome) %>" width="90" height="70" loading="lazy">
+            </button>
+          </li>
+        <% }); %>
+      </ul>
+    <% } %>
+  </div>
+
+  <div class="perfil-animal__dados">
+    <div class="perfil-animal__titulo">
+      <h1><%= animal.nome %></h1>
+      <span class="<%= f.classeSituacao(animal.situacao) %>"><%= f.situacaoAnimal(animal.situacao) %> para adoção</span>
+    </div>
+
+    <dl class="ficha">
+      <div><dt>Espécie e raça</dt><dd><%= animal.especie.nome %> · <%= animal.raca ? animal.raca.nome : 'SRD' %></dd></div>
+      <div><dt>Sexo e porte</dt><dd><%= f.sexo(animal.sexo) %> · <%= f.porte(animal.porte) %></dd></div>
+      <div><dt>Idade aproximada</dt><dd><%= f.idade(animal.idade_meses) %></dd></div>
+      <div><dt>Castrado</dt><dd><%= animal.castrado ? 'Sim' : 'Ainda não' %></dd></div>
+      <div><dt>Vacinado</dt><dd><%= animal.vacinado ? 'Sim' : 'Ainda não' %></dd></div>
+      <div><dt>Vermifugado</dt><dd><%= animal.vermifugado ? 'Sim' : 'Ainda não' %></dd></div>
+      <div><dt>Resgatado em</dt><dd><%= f.data(animal.data_resgate) %></dd></div>
+    </dl>
+
+    <% if (animal.caracteristicas && animal.caracteristicas.length) { %>
+      <h2>Temperamento e convivência</h2>
+      <ul class="lista-tags">
+        <% animal.caracteristicas.forEach(function (item) { %>
+          <li><%= item.nome %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
+    <% if (animal.descricao) { %>
+      <h2>Sobre <%= animal.nome %></h2>
+      <p class="texto-longo"><%= animal.descricao %></p>
+    <% } %>
+
+    <% if (animal.situacao === 'DISPONIVEL') { %>
+      <p><a class="botao botao--grande" href="#formulario">Tenho interesse em adotar</a></p>
+    <% } else { %>
+      <p class="vazio vazio--curto">
+        <%= animal.nome %> não está recebendo pedidos agora porque está em
+        "<%= f.situacaoAnimal(animal.situacao) %>".
+        <a href="/animais">Veja quem está disponível.</a>
+      </p>
+    <% } %>
+  </div>
+</article>
+
+<% if (animal.situacao === 'DISPONIVEL') { %>
+  <section class="formulario-interesse" id="formulario">
+    <div class="formulario-interesse__resumo">
+      <h2>Você está pedindo <%= animal.nome %></h2>
+      <img src="<%= f.fotoPrincipal(animal) %>" alt="" aria-hidden="true" width="120" height="90">
+      <p><%= f.resumoAnimal(animal) %></p>
+      <p class="miudo">Confira o nome antes de enviar: o pedido vale para este animal.</p>
+    </div>
+
+    <form method="post" action="/animais/<%= animal.id_animal %>/interesse" novalidate data-validar>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h2>Formulário de interesse em adoção</h2>
+      <p class="miudo">Campos com * são obrigatórios. Seus dados ficam visíveis apenas para a equipe.</p>
+
+      <div class="campo">
+        <label for="nome_interessado">Nome completo *</label>
+        <input type="text" id="nome_interessado" name="nome_interessado" required minlength="5" maxlength="120"
+               autocomplete="name" value="<%= formulario.nome_interessado || '' %>">
+      </div>
+
+      <div class="campo-par">
+        <div class="campo">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" name="email" required maxlength="160" autocomplete="email"
+                 value="<%= formulario.email || '' %>">
+          <small>É para este endereço que enviaremos o andamento do pedido.</small>
+        </div>
+        <div class="campo">
+          <label for="telefone">Telefone com DDD *</label>
+          <input type="tel" id="telefone" name="telefone" required autocomplete="tel"
+                 placeholder="(53) 99999-0000" data-mascara="telefone"
+                 pattern="\(\d{2}\) \d{4,5}-\d{4}"
+                 data-mensagem-padrao="Informe o telefone com DDD, como (53) 99999-0000."
+                 value="<%= formulario.telefone || '' %>">
+        </div>
+      </div>
+
+      <div class="campo-par">
+        <div class="campo">
+          <label for="cidade">Cidade *</label>
+          <input type="text" id="cidade" name="cidade" required maxlength="80"
+                 value="<%= formulario.cidade || 'Pelotas' %>">
+        </div>
+        <div class="campo campo--estreito">
+          <label for="uf">Estado *</label>
+          <select id="uf" name="uf" required>
+            <% f.UFS.forEach(function (uf) { %>
+              <option value="<%= uf %>" <%= (formulario.uf || 'RS') === uf ? 'selected' : '' %>><%= uf %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="tipo_moradia">Tipo de moradia *</label>
+        <select id="tipo_moradia" name="tipo_moradia" required>
+          <option value="">Escolha uma opção</option>
+          <option value="CASA_COM_PATIO" <%= formulario.tipo_moradia === 'CASA_COM_PATIO' ? 'selected' : '' %>>Casa com pátio</option>
+          <option value="CASA_SEM_PATIO" <%= formulario.tipo_moradia === 'CASA_SEM_PATIO' ? 'selected' : '' %>>Casa sem pátio</option>
+          <option value="APARTAMENTO" <%= formulario.tipo_moradia === 'APARTAMENTO' ? 'selected' : '' %>>Apartamento</option>
+          <option value="SITIO_CHACARA" <%= formulario.tipo_moradia === 'SITIO_CHACARA' ? 'selected' : '' %>>Sítio ou chácara</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label class="opcao">
+          <input type="checkbox" name="possui_outros_animais" value="true" <%= formulario.possui_outros_animais ? 'checked' : '' %>>
+          Já tenho outros animais em casa
+        </label>
+      </div>
+
+      <div class="campo">
+        <label for="mensagem">Conte um pouco sobre a sua casa e a sua rotina</label>
+        <textarea id="mensagem" name="mensagem" rows="4" maxlength="1000"><%= formulario.mensagem || '' %></textarea>
+      </div>
+
+      <div class="campo">
+        <label class="opcao">
+          <input type="checkbox" name="aceite" required>
+          Li e aceito as condições da adoção responsável: castração, cuidados veterinários e acompanhamento da equipe. *
+        </label>
+      </div>
+
+      <button class="botao botao--grande" type="submit">Enviar solicitação</button>
+      <p class="miudo">Ao enviar, você recebe um protocolo para acompanhar o pedido nesta mesma página.</p>
+    </form>
+  </section>
+<% } %>
+
+<%- include('../partials/rodape') %>

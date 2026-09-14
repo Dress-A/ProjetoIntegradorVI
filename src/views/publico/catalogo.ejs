@@ -1,0 +1,105 @@
+<%- include('../partials/cabecalho') %>
+
+<div class="cabecalho-pagina">
+  <h1>Animais disponíveis para adoção</h1>
+  <p class="contador"><%= f.pluralizar(resultado.total, 'animal encontrado', 'animais encontrados') %></p>
+</div>
+
+<div class="catalogo">
+  <button class="filtros-alternar botao botao--contorno" type="button" aria-expanded="false" aria-controls="painel-filtros">
+    Filtros de pesquisa
+  </button>
+
+  <form class="filtros" id="painel-filtros" method="get" action="/animais">
+    <h2>Filtros de pesquisa</h2>
+
+    <div class="filtros__campo">
+      <label for="termo">Nome do animal</label>
+      <input type="search" id="termo" name="termo" value="<%= filtros.termo %>" placeholder="Ex.: Mel">
+    </div>
+
+    <fieldset class="filtros__grupo">
+      <legend>Espécie</legend>
+      <div class="filtros__campo">
+        <label for="especie" class="rotulo-oculto">Espécie</label>
+        <select id="especie" name="especie">
+          <option value="">Todas</option>
+          <% opcoes.especies.forEach(function (especie) { %>
+            <option value="<%= especie.id_especie %>" <%= String(filtros.especie) === String(especie.id_especie) ? 'selected' : '' %>>
+              <%= especie.nome %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset class="filtros__grupo">
+      <legend>Porte</legend>
+      <% ['PEQUENO', 'MEDIO', 'GRANDE'].forEach(function (valor) { %>
+        <label class="opcao">
+          <input type="checkbox" name="porte" value="<%= valor %>" <%= [].concat(filtros.porte).includes(valor) ? 'checked' : '' %>>
+          <%= f.porte(valor) %>
+        </label>
+      <% }); %>
+    </fieldset>
+
+    <fieldset class="filtros__grupo">
+      <legend>Sexo</legend>
+      <% ['F', 'M'].forEach(function (valor) { %>
+        <label class="opcao">
+          <input type="checkbox" name="sexo" value="<%= valor %>" <%= [].concat(filtros.sexo).includes(valor) ? 'checked' : '' %>>
+          <%= f.sexo(valor) %>
+        </label>
+      <% }); %>
+    </fieldset>
+
+    <fieldset class="filtros__grupo">
+      <legend>Idade em meses</legend>
+      <div class="filtros__par">
+        <div class="filtros__campo">
+          <label for="idadeMin">De</label>
+          <input type="number" id="idadeMin" name="idadeMin" min="0" max="360" value="<%= filtros.idadeMin %>">
+        </div>
+        <div class="filtros__campo">
+          <label for="idadeMax">Até</label>
+          <input type="number" id="idadeMax" name="idadeMax" min="0" max="360" value="<%= filtros.idadeMax %>">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="filtros__grupo">
+      <legend>Características</legend>
+      <% opcoes.caracteristicas.forEach(function (item) { %>
+        <label class="opcao">
+          <input type="checkbox" name="caracteristicas" value="<%= item.id_caracteristica %>"
+                 <%= [].concat(filtros.caracteristicas).map(String).includes(String(item.id_caracteristica)) ? 'checked' : '' %>>
+          <%= item.nome %>
+        </label>
+      <% }); %>
+    </fieldset>
+
+    <div class="filtros__acoes">
+      <button class="botao" type="submit">Aplicar filtros</button>
+      <a class="botao botao--contorno" href="/animais">Limpar</a>
+    </div>
+  </form>
+
+  <div class="catalogo__resultados">
+    <% if (resultado.itens.length) { %>
+      <div class="grade-animais">
+        <% resultado.itens.forEach(function (animal) { %>
+          <%- include('../partials/cartaoAnimal', { animal: animal }) %>
+        <% }); %>
+      </div>
+      <%- include('../partials/paginacao') %>
+    <% } else { %>
+      <div class="vazio">
+        <h2>Nenhum animal com esses filtros</h2>
+        <p>Tente tirar um filtro ou ampliar a faixa de idade. Novos resgatados são publicados toda semana.</p>
+        <a class="botao" href="/animais">Ver todos os animais</a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/rodape') %>
