@@ -1,0 +1,94 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<div class="cabecalho-admin">
+  <h1>Atendimentos e cuidados de saúde</h1>
+</div>
+
+<section class="bloco">
+  <h2>Registrar atendimento</h2>
+  <form class="formulario-admin formulario-admin--linha" method="post" action="/admin/atendimentos" novalidate data-validar>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="campo">
+      <label for="id_animal">Animal</label>
+      <select id="id_animal" name="id_animal" required>
+        <option value="">Escolha</option>
+        <% animais.forEach(function (a) { %>
+          <option value="<%= a.id_animal %>"><%= a.nome %> (#<%= a.id_animal %>)</option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" required>
+        <% tipos.forEach(function (t) { %>
+          <option value="<%= t.valor %>"><%= t.rotulo %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="data_ocorrencia">Data</label>
+      <input type="date" id="data_ocorrencia" name="data_ocorrencia" required>
+    </div>
+    <div class="campo campo--largo">
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" name="descricao" required minlength="5" maxlength="2000"
+             placeholder="O que foi feito, dose, retorno...">
+    </div>
+    <div class="campo campo--acao">
+      <button class="botao" type="submit">Registrar</button>
+    </div>
+  </form>
+</section>
+
+<form class="filtros-linha" method="get" action="/admin/atendimentos">
+  <div class="campo">
+    <label for="filtro-animal">Filtrar por animal</label>
+    <select id="filtro-animal" name="animal">
+      <option value="">Todos</option>
+      <% animais.forEach(function (a) { %>
+        <option value="<%= a.id_animal %>" <%= String(filtroAnimal) === String(a.id_animal) ? 'selected' : '' %>><%= a.nome %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo campo--acao">
+    <button class="botao" type="submit">Filtrar</button>
+    <a class="botao botao--contorno" href="/admin/atendimentos">Limpar</a>
+  </div>
+</form>
+
+<% if (atendimentos.length) { %>
+  <div class="tabela-rolagem">
+    <table class="tabela">
+      <caption class="rotulo-oculto">Atendimentos registrados</caption>
+      <thead>
+        <tr><th scope="col">Data</th><th scope="col">Animal</th><th scope="col">Tipo</th><th scope="col">Descrição</th><th scope="col">Responsável</th><th scope="col">Ações</th></tr>
+      </thead>
+      <tbody>
+        <% atendimentos.forEach(function (a) { %>
+          <tr>
+            <th scope="row"><%= f.data(a.data_ocorrencia) %></th>
+            <td><%= a.animal ? a.animal.nome : '—' %></td>
+            <td><%= f.tipoAtendimento(a.tipo) %></td>
+            <td><%= a.descricao %></td>
+            <td><%= a.responsavel ? a.responsavel.nome : '—' %></td>
+            <td>
+              <form class="forma-inline" method="post" action="/admin/atendimentos/<%= a.id_atendimento %>/excluir"
+                    data-confirmar="Remover este atendimento do histórico?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="botao-texto botao-texto--perigo" type="submit">Remover</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+<% } else { %>
+  <div class="vazio">
+    <h2>Nenhum atendimento registrado</h2>
+    <p>Use o formulário acima para anotar vacinas, castrações e consultas.</p>
+  </div>
+<% } %>
+
+<%- include('../../partials/rodapeAdmin') %>

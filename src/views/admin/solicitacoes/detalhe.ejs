@@ -1,0 +1,107 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<div class="cabecalho-admin">
+  <h1>Solicitação <%= solicitacao.protocolo %></h1>
+  <a class="botao botao--contorno" href="/admin/solicitacoes">Voltar para a lista</a>
+</div>
+
+<p class="linha-status">
+  <span class="<%= 'selo selo--' + solicitacao.status.toLowerCase() %>"><%= f.statusPedido(solicitacao.status) %></span>
+  <span>Animal: <a href="/animais/<%= solicitacao.animal.id_animal %>" target="_blank" rel="noopener"><%= solicitacao.animal.nome %></a>
+    (<%= f.situacaoAnimal(solicitacao.animal.situacao) %>)</span>
+</p>
+
+<div class="colunas-duas">
+  <section class="bloco">
+    <h2>Dados do interessado</h2>
+    <dl class="ficha">
+      <div><dt>Nome</dt><dd><%= solicitacao.nome_interessado %></dd></div>
+      <div><dt>E-mail</dt><dd><a href="mailto:<%= solicitacao.email %>"><%= solicitacao.email %></a></dd></div>
+      <div><dt>Telefone</dt><dd><%= f.telefone(solicitacao.telefone) %></dd></div>
+      <div><dt>Cidade</dt><dd><%= solicitacao.cidade %>/<%= solicitacao.uf %></dd></div>
+      <div><dt>Moradia</dt><dd><%= f.moradia(solicitacao.tipo_moradia) %></dd></div>
+      <div><dt>Outros animais</dt><dd><%= solicitacao.possui_outros_animais ? 'Sim' : 'Não' %></dd></div>
+      <div><dt>Pedido feito em</dt><dd><%= f.dataHora(solicitacao.data_solicitacao) %></dd></div>
+      <div><dt>Última decisão</dt><dd><%= f.dataHora(solicitacao.data_decisao) %></dd></div>
+      <div><dt>Analisado por</dt><dd><%= solicitacao.responsavel ? solicitacao.responsavel.nome : '—' %></dd></div>
+    </dl>
+
+    <% if (solicitacao.mensagem) { %>
+      <h3>Mensagem enviada</h3>
+      <p class="texto-longo"><%= solicitacao.mensagem %></p>
+    <% } %>
+
+    <p class="miudo">
+      Estes dados são pessoais e só aparecem para quem está logado. Não os
+      compartilhe fora da equipe.
+    </p>
+  </section>
+
+  <section class="bloco">
+    <h2>Registrar decisão</h2>
+
+    <% if (usuarioLogado.perfil !== 'ADMINISTRADOR') { %>
+      <p class="vazio vazio--curto">
+        Somente a administração registra decisões. Você pode consultar o pedido e
+        conversar com a pessoa interessada.
+      </p>
+    <% } else if (!proximos.length) { %>
+      <p class="vazio vazio--curto">
+        Este pedido está encerrado em "<%= f.statusPedido(solicitacao.status) %>" e não muda mais de situação.
+      </p>
+    <% } else { %>
+      <form method="post" action="/admin/solicitacoes/<%= solicitacao.id_solicitacao %>/decisao"
+            novalidate data-validar data-decisao
+            data-confirmar="Confirmar esta decisão? O histórico e o aviso por e-mail são gerados na hora.">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="campo">
+          <label for="status">Decisão</label>
+          <select id="status" name="status" required>
+            <% proximos.forEach(function (p) { %>
+              <option value="<%= p.valor %>" data-exige-observacao="<%= p.exigeObservacao %>"><%= p.rotulo %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="observacao">Observação interna</label>
+          <textarea id="observacao" name="observacao" rows="4" maxlength="2000"></textarea>
+          <small id="dica-observacao">Obrigatória para recusar ou cancelar. Não aparece para o interessado.</small>
+        </div>
+
+        <button class="botao botao--grande" type="submit">Confirmar decisão</button>
+      </form>
+
+      <ul class="miudo lista-marcada">
+        <li>Aprovar coloca <%= solicitacao.animal.nome %> em "Em processo"; os outros pedidos seguem esperando.</li>
+        <li>Concluir marca <%= solicitacao.animal.nome %> como adotado e recusa os demais pedidos em aberto.</li>
+        <li>Cancelar um pedido aprovado devolve <%= solicitacao.animal.nome %> para "Disponível".</li>
+      </ul>
+    <% } %>
+  </section>
+</div>
+
+<section class="bloco">
+  <h2>Histórico</h2>
+  <table class="tabela">
+    <caption class="rotulo-oculto">Mudanças de situação deste pedido</caption>
+    <thead>
+      <tr><th scope="col">Quando</th><th scope="col">De</th><th scope="col">Para</th><th scope="col">Quem</th><th scope="col">Observação</th></tr>
+    </thead>
+    <tbody>
+      <% solicitacao.historico.forEach(function (item) { %>
+        <tr>
+          <th scope="row"><%= f.dataHora(item.data_registro) %></th>
+          <td><%= item.status_anterior ? f.statusPedido(item.status_anterior) : '—' %></td>
+          <td><%= f.statusPedido(item.status_novo) %></td>
+          <td><%= item.autor ? item.autor.nome : 'Formulário público' %></td>
+          <td><%= item.observacao || '—' %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <p class="miudo">O histórico é gravado automaticamente e não pode ser editado nem apagado.</p>
+</section>
+
+<%- include('../../partials/rodapeAdmin') %>

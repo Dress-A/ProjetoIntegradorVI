@@ -1,0 +1,122 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<div class="cabecalho-admin">
+  <h1>Animais cadastrados</h1>
+  <a class="botao" href="/admin/animais/novo">Cadastrar animal</a>
+</div>
+
+<form class="filtros-linha" method="get" action="/admin/animais">
+  <div class="campo">
+    <label for="termo">Nome</label>
+    <input type="search" id="termo" name="termo" value="<%= filtros.termo %>">
+  </div>
+  <div class="campo">
+    <label for="situacao">Situação</label>
+    <select id="situacao" name="situacao">
+      <option value="">Todas</option>
+      <% situacoes.forEach(function (s) { %>
+        <option value="<%= s.valor %>" <%= filtros.situacao === s.valor ? 'selected' : '' %>><%= s.rotulo %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo">
+    <label for="especie">Espécie</label>
+    <select id="especie" name="especie">
+      <option value="">Todas</option>
+      <% opcoes.especies.forEach(function (e) { %>
+        <option value="<%= e.id_especie %>" <%= String(filtros.especie) === String(e.id_especie) ? 'selected' : '' %>><%= e.nome %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="campo">
+    <label for="ativo">Registro</label>
+    <select id="ativo" name="ativo">
+      <option value="">Todos</option>
+      <option value="true" <%= filtros.ativo === 'true' ? 'selected' : '' %>>Ativos</option>
+      <option value="false" <%= filtros.ativo === 'false' ? 'selected' : '' %>>Inativos</option>
+    </select>
+  </div>
+  <div class="campo campo--acao">
+    <button class="botao" type="submit">Filtrar</button>
+    <a class="botao botao--contorno" href="/admin/animais">Limpar</a>
+  </div>
+</form>
+
+<p class="contador"><%= f.pluralizar(resultado.total, 'animal encontrado', 'animais encontrados') %></p>
+
+<% if (resultado.itens.length) { %>
+<div class="tabela-rolagem">
+  <table class="tabela">
+    <caption class="rotulo-oculto">Animais cadastrados no sistema</caption>
+    <thead>
+      <tr>
+        <th scope="col">Cód.</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Espécie</th>
+        <th scope="col">Situação</th>
+        <th scope="col">Mudar situação</th>
+        <th scope="col">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resultado.itens.forEach(function (animal) { %>
+        <tr <%- animal.ativo ? '' : 'class="linha-inativa"' %>>
+          <th scope="row">#<%= animal.id_animal %></th>
+          <td>
+            <a href="/animais/<%= animal.id_animal %>" target="_blank" rel="noopener"><%= animal.nome %></a>
+            <% if (!animal.ativo) { %><span class="marca-inativo">inativo</span><% } %>
+          </td>
+          <td><%= animal.especie.nome %><%= animal.raca ? ' · ' + animal.raca.nome : '' %></td>
+          <td><span class="<%= f.classeSituacao(animal.situacao) %>"><%= f.situacaoAnimal(animal.situacao) %></span></td>
+          <td>
+            <% const proximas = f.proximasSituacoes(animal.situacao); %>
+            <% if (animal.ativo && proximas.length) { %>
+              <form class="forma-inline" method="post" action="/admin/animais/<%= animal.id_animal %>/situacao"
+                    data-confirmar="Mudar a situação de <%= animal.nome %>?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <label class="rotulo-oculto" for="situacao-<%= animal.id_animal %>">Nova situação de <%= animal.nome %></label>
+                <select id="situacao-<%= animal.id_animal %>" name="situacao">
+                  <% proximas.forEach(function (opcao) { %>
+                    <option value="<%= opcao.valor %>"><%= opcao.rotulo %></option>
+                  <% }); %>
+                </select>
+                <button class="botao botao--pequeno" type="submit">Aplicar</button>
+              </form>
+            <% } else { %>
+              <span class="miudo">—</span>
+            <% } %>
+          </td>
+          <td class="acoes">
+            <a href="/admin/animais/<%= animal.id_animal %>/editar">Editar</a>
+            <a href="/admin/animais/<%= animal.id_animal %>/fotos">Fotos</a>
+            <% if (animal.ativo) { %>
+              <form class="forma-inline" method="post" action="/admin/animais/<%= animal.id_animal %>/excluir"
+                    data-confirmar="Excluir <%= animal.nome %>? Se houver pedidos no histórico, o registro será apenas inativado.">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="botao-texto botao-texto--perigo" type="submit">Excluir</button>
+              </form>
+            <% } else { %>
+              <form class="forma-inline" method="post" action="/admin/animais/<%= animal.id_animal %>/reativar"
+                    data-confirmar="Devolver <%= animal.nome %> ao catálogo?">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="botao-texto" type="submit">Reativar</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<% const queryBase = Object.entries(filtros).filter(([, v]) => v).map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&'); %>
+<%- include('../../partials/paginacao', { resultado: resultado, queryBase: queryBase }) %>
+<% } else { %>
+  <div class="vazio">
+    <h2>Nenhum animal com esses filtros</h2>
+    <p>Ajuste os filtros ou cadastre o primeiro animal do acolhimento.</p>
+    <a class="botao" href="/admin/animais/novo">Cadastrar animal</a>
+  </div>
+<% } %>
+
+<%- include('../../partials/rodapeAdmin') %>

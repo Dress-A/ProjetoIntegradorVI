@@ -1,0 +1,70 @@
+<%- include('../../partials/cabecalhoAdmin') %>
+
+<div class="cabecalho-admin">
+  <h1>Fotos de <%= animal.nome %></h1>
+  <a class="botao botao--contorno" href="/admin/animais">Voltar para a lista</a>
+</div>
+
+<p class="miudo">
+  Até <%= maximoFotos %> fotos por animal, em JPEG ou PNG de no máximo 2 MB cada.
+  Exatamente uma foto é a principal: é ela que aparece no catálogo.
+  <strong><%= f.pluralizar(fotos.length, 'foto cadastrada', 'fotos cadastradas') %>.</strong>
+</p>
+
+<% if (fotos.length < maximoFotos) { %>
+  <form class="formulario-admin" method="post" action="/admin/animais/<%= animal.id_animal %>/fotos"
+        enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="campo">
+      <label for="fotos">Escolher imagens</label>
+      <input type="file" id="fotos" name="fotos" accept="image/jpeg,image/png" multiple required>
+      <small>Você pode selecionar mais de uma imagem de uma vez.</small>
+    </div>
+    <button class="botao" type="submit">Enviar fotos</button>
+  </form>
+<% } else { %>
+  <p class="vazio vazio--curto">Limite de <%= maximoFotos %> fotos alcançado. Remova alguma antes de enviar outra.</p>
+<% } %>
+
+<% if (fotos.length) { %>
+  <div class="galeria-admin">
+    <% fotos.forEach(function (foto) { %>
+      <figure class="galeria-admin__item">
+        <img src="<%= foto.caminho_arquivo %>" alt="<%= foto.legenda || ('Foto de ' + animal.nome) %>" width="220" height="160">
+        <figcaption>
+          <p><%= foto.legenda || 'Sem legenda' %></p>
+          <p class="miudo">Posição <%= foto.ordem %><%= foto.principal ? ' · foto principal' : '' %></p>
+
+          <div class="galeria-admin__acoes">
+            <% if (!foto.principal) { %>
+              <form class="forma-inline" method="post" action="/admin/fotos/<%= foto.id_foto %>/principal">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="botao-texto" type="submit">Tornar principal</button>
+              </form>
+            <% } %>
+
+            <form class="forma-inline" method="post" action="/admin/fotos/<%= foto.id_foto %>/ordem">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <label class="rotulo-oculto" for="ordem-<%= foto.id_foto %>">Posição da foto</label>
+              <input type="number" id="ordem-<%= foto.id_foto %>" name="ordem" min="1" max="<%= maximoFotos %>" value="<%= foto.ordem %>">
+              <button class="botao-texto" type="submit">Salvar posição</button>
+            </form>
+
+            <form class="forma-inline" method="post" action="/admin/fotos/<%= foto.id_foto %>/excluir"
+                  data-confirmar="Remover esta foto de <%= animal.nome %>?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="botao-texto botao-texto--perigo" type="submit">Remover</button>
+            </form>
+          </div>
+        </figcaption>
+      </figure>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="vazio">
+    <h2><%= animal.nome %> ainda não tem foto</h2>
+    <p>Sem foto o animal aparece no catálogo com uma imagem genérica, e recebe bem menos pedidos.</p>
+  </div>
+<% } %>
+
+<%- include('../../partials/rodapeAdmin') %>
