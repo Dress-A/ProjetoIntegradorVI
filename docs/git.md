@@ -17,9 +17,25 @@ Tipos usados: `feat`, `fix`, `refactor`, `test`, `docs`, `style`, `chore`.
 
 ## Ramos
 
-- `main` — o que está entregue e funcionando.
-- `desenvolvimento` — integração do que está em andamento.
-- `feat/<assunto>` — uma funcionalidade por ramo, aberta a partir de `desenvolvimento`.
+| Ramo | Para que serve |
+|---|---|
+| `main` | O estado entregue. |
+| `desenvolvimento` | Onde o trabalho foi integrado. |
+| `feat/banco-de-dados` | Esquema, dados de demonstração e script de carga. |
+| `feat/camada-de-dados` | Domínio, modelos do Sequelize e repositórios. |
+| `feat/regras-de-negocio` | Serviços com as RN01 a RN10, validadores e middlewares. |
+| `feat/modulo-publico` | Catálogo, perfil do animal, pedido e acompanhamento. |
+| `feat/modulo-administrativo` | Entrada, painel, animais, pedidos e usuários. |
+| `feat/interface` | Folha de estilo, JavaScript das telas e imagens. |
+| `feat/testes-automatizados` | Testes com Jest e Supertest e conferência do seed. |
+
+Cada ramo de funcionalidade foi aberto a partir de `desenvolvimento` e integrado
+de volta com `git merge --no-ff`, o que preserva o ponto de integração no
+histórico. Veja o desenho com:
+
+```bash
+git log --oneline --graph --all
+```
 
 ## O que já está feito
 
@@ -52,8 +68,13 @@ As mensagens e os arquivos não mudam; só a autoria.
 
 ```bash
 git remote add origin https://github.com/Dress-A/ProjetoIntegradorVI.git
-git push -u origin main
-git push -u origin desenvolvimento
+git push --all -u origin
+```
+
+O `--all` envia as nove branches de uma vez. Para conferir antes de enviar:
+
+```bash
+git branch
 ```
 
 Se o repositório remoto já tiver algum conteúdo — um README criado pelo próprio
@@ -63,7 +84,8 @@ conteúdo remoto pelo local, sem volta.
 
 ## Conferindo depois do envio
 
-Na página do repositório devem aparecer as duas branches, os treze commits e a
+Na página do repositório devem aparecer as nove branches (o seletor fica no alto,
+à esquerda da lista de arquivos), o histórico com os pontos de integração e a
 árvore de pastas com `src/`, `db/`, `tests/` e `docs/`. O arquivo `.env` **não**
 pode estar lá: ele guarda a senha do banco e está no `.gitignore`. O que vai é
 o `.env.example`.
