@@ -54,15 +54,32 @@ histórico à sua conta, troque a identidade e reescreva o histórico **uma úni
 vez**, antes de enviar:
 
 ```bash
-git checkout desenvolvimento
 git config user.name "Andressa Ávila"
 git config user.email "seu-email-do-github@exemplo.com"
-git rebase --root --exec "git commit --amend --no-edit --reset-author"
-git checkout main
-git reset --hard desenvolvimento
+
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f --env-filter '
+  GIT_AUTHOR_NAME="Andressa Ávila"
+  GIT_AUTHOR_EMAIL="seu-email-do-github@exemplo.com"
+  GIT_COMMITTER_NAME="Andressa Ávila"
+  GIT_COMMITTER_EMAIL="seu-email-do-github@exemplo.com"
+  export GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
+' -- --all
+
+git for-each-ref --format="%(refname)" refs/original/ | xargs -n1 git update-ref -d
 ```
 
-As mensagens e os arquivos não mudam; só a autoria.
+As mensagens e os arquivos não mudam; só a autoria. A última linha descarta as
+referências que o `filter-branch` guarda do histórico anterior.
+
+**Não use `git rebase --root` para isso.** Ele lineariza o histórico e apaga os
+sete pontos de integração das branches — o grafo fica reto e o trabalho em
+ramos desaparece. Confira depois de rodar:
+
+```bash
+git log --oneline main | wc -l          # 29
+git log --merges --oneline main | wc -l # 7
+git branch | wc -l                      # 9
+```
 
 ## Enviando para o GitHub
 

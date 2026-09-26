@@ -6,3 +6,8 @@ src/public/uploads/*
 !src/public/uploads/demo/
 npm-debug.log*
 .DS_Store
+
+# Ferramentas locais de instalação e envio, fora do projeto
+ENVIAR-*.bat
+RODAR-*.bat
+RESULTADO-DOS-TESTES.txt
