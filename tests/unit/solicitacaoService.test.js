@@ -206,6 +206,6 @@ describe('registrarDecisao (RF11 / UC11)', () => {
     solicitacaoRepository.buscarPorId.mockResolvedValue(pedidoFalso('PENDENTE'));
 
     await expect(solicitacaoService.registrarDecisao(9, 'CONCLUIDA', '', ADMIN))
-      .rejects.toMatchObject({ codigo: 'TRANSACAO_INVALIDA' });
+      .rejects.toMatchObject({ codigo: 'TRANSICAO_INVALIDA' });
   });
 });

@@ -2,15 +2,31 @@
 
 <section class="pagina-erro">
   <p class="pagina-erro__codigo">Erro 404</p>
-  <h1>Esta página não existe</h1>
-  <p>
-    O endereço <code><%= caminho %></code> não corresponde a nenhuma página do site.
-    Pode ser um link antigo, ou um animal que saiu do catálogo depois de adotado.
-  </p>
-  <p class="pagina-erro__acoes">
-    <a class="botao" href="/animais">Ver animais disponíveis</a>
-    <a class="botao botao--contorno" href="/">Voltar ao início</a>
-  </p>
+
+  <% if (typeof mensagem !== 'undefined' && mensagem) { %>
+    <%# Veio de uma regra de negócio: o endereço existe, o registro é que não. %>
+    <h1>Não encontramos o que você procura</h1>
+    <p><%= mensagem %></p>
+    <p>
+      Confira se digitou tudo corretamente. Se o pedido foi feito há pouco,
+      use o mesmo e-mail que você informou no formulário.
+    </p>
+    <p class="pagina-erro__acoes">
+      <a class="botao" href="/acompanhar">Consultar de novo</a>
+      <a class="botao botao--contorno" href="/animais">Ver animais disponíveis</a>
+    </p>
+  <% } else { %>
+    <%# Endereço que não corresponde a nenhuma rota do site. %>
+    <h1>Esta página não existe</h1>
+    <p>
+      O endereço <code><%= caminho %></code> não corresponde a nenhuma página do site.
+      Pode ser um link antigo, ou um animal que saiu do catálogo depois de adotado.
+    </p>
+    <p class="pagina-erro__acoes">
+      <a class="botao" href="/animais">Ver animais disponíveis</a>
+      <a class="botao botao--contorno" href="/">Voltar ao início</a>
+    </p>
+  <% } %>
 </section>
 
 <%- include('../partials/rodape') %>
